@@ -1,0 +1,149 @@
+<html>
+	<head>
+		<title>MAR 2014 - TP1 by RC&FL</title> 
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style> body { margin: 0; } canvas { width: 100%; height: 100% } </style> 
+	</head> 
+	<body>
+		<div id="info">
+			<table border="0" width="100%">
+				<tbody>
+					<tr>
+						<td><img src="images/logoUR1.jpg"></td>
+						<td><h3>Master 2 Informatique <br>GL & MiTiC </h3><br> option MAR : TP1</td>
+						<td><img src="images/logoISTIC.gif"></td>
+					</tr>
+					<tr>
+						<td><i>auteur :</i> Rémi Cozot  & Fabrice Lamarche</td>
+						<td><i>date :</i> Novembre 2014</td>
+						<td><i>durée :</i>  2 heures</td>
+					</tr>
+					<tr>
+						<td><i>date limite :</i> sans objet</td>	
+						<td></td>
+						<td><a href="mailto:cozot@irisa.fr?Subject=[MAR2014]%20TP1">(Envoyer compte rendu)</a></td> 
+					</tr>
+				</tbody>
+			</table>
+			<h2>Sujet : Géométries, Matériaux et Graphe de scène</h2>
+			
+			<h3>Question 1 : Installation et étude du fourni</h3>
+			Téléchargez <b>ThreeJS</b> (<a href="http://threejs.org/">ici</a>). <br>
+			Téléchargez l'environnement des TPs (<a href="http://cozot.free.fr/threejs/marTP01.zip">ici</a>). <br>
+			Faites en sorte que l'exemple fourni fonctionne avec <b>Firefox</b> 
+			(Remarque : Chrome ou Internet Explorer ne permettent pas de faire fonctionner 
+			l'exemple en local). <br>
+			<h3>Question 2 : Géométries</h3>
+			Remplacez l'objet de l'exemple fourni par les géométries disponibles par <b>ThreeJS</b> :
+			<code>BoxGeometry, CylinderGeometry, TorusGeometry</code>.
+			<h3>Question 3 : Matériaux</h3>
+			Sur trois tores (disposés horizontaelment sur l'axe x), essayez les différentes types 
+			de matériaux : 
+			<code> MeshBasicMaterial, MeshLambertMaterial, MeshPongMaterial</code>.
+			<h3>Question 4 : Graphe de scène</h3>
+			Construisez une scène composée de : 1 cylindre, 1 tore, et 1 cube.<br>
+			Le cylindre (vertical) tourne autour  de son axe horizontal (x).<br>
+			Le tore tourne autour du cylindre selon l'axe y mais fait toujours face à la caméra. <br>
+			Le cube décrit un cercle qui passe par l'intérieur du tore (Cf. schéma).
+			<br>
+			<img src="images/schema.jpg"><br><b>Figure :</b> schéma<br>
+			<h3>Travail à rendre</h3>
+			Un fichier <b>zip</b> 
+			(contenant la page html, et éventuellement les ressources supplémentaires permettant sonexécution) 
+			correspondant à la <b>Question 4</b>.
+			<br><br>
+	
+	</div>
+		<!-- include --> 
+		<script src="../threejs/build/three.min.js"></script> 
+		<script src="myJS/ThreeRenderingEnv.js"></script> 
+		<script src="myJS/ThreeLightingEnv.js"></script> 
+		<script src="myJS/blobul.js"></script> 
+		
+		<script>
+			//----------------------------------------------------------------------------
+			// MAR 2014 - TP01
+			// author(s) : Cozot, R. and Lamarche, F.
+			// date : 11/15/2014
+			//---------------------------------------------------------------------------- 
+			
+			// global vars
+			//----------------------------------------------------------------------------
+			var RC =  new ThreeRenderingEnv();
+			var Lights = new ThreeLightingEnv('rembrandt','bicolor','spot',RC);
+			
+			// origine
+			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+			var material = new THREE.MeshBasicMaterial( {transparent: true, opacity: 0.0});
+			var origine = new THREE.Mesh( geometry, material );
+			RC.addToScene( origine );
+			
+			// cylinder
+			var geometry = new THREE.CylinderGeometry( 3, 3, 20, 32 );
+			var material = new THREE.MeshPhongMaterial( {color: 0xffff00} );
+			var cylinder = new THREE.Mesh( geometry, material );
+			RC.addToScene( cylinder );
+			
+			// torus
+			var geometry = new THREE.TorusGeometry( 8, 2, 16, 100 );
+			var material = new THREE.MeshPhongMaterial( { color: 0xffff00 } );
+			var torus = new THREE.Mesh( geometry, material );
+			torus.position.x = 20;
+			origine.add( torus );
+			
+			// cubeParent
+			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+			var material = new THREE.MeshBasicMaterial( {transparent: true, opacity: 0.0});
+			var cubeParent = new THREE.Mesh( geometry, material );
+			cubeParent.position.x = 8;
+			torus.add( cubeParent );
+			
+			// cube
+			var geometry = new THREE.BoxGeometry( 2, 2, 2 );
+			geometry.applyMatrix( new THREE.Matrix4().makeTranslation(8,0,0) );
+			var material = new THREE.MeshPhongMaterial( {color: 0x00ff00} );
+			var cube = new THREE.Mesh( geometry, material );
+			cubeParent.add( cube );
+			
+			
+			// ground
+			var ground = new THREE.Mesh(
+				new THREE.BoxGeometry( 100, 1, 100 ),
+				new THREE.MeshPhongMaterial( {color: 0x808080} )		
+			);
+			ground.receiveShadow = true;
+			ground.position.y = -20;
+			RC.addToScene( ground ); 
+			
+			RC.camera.position.z = 30; 
+			RC.camera.position.y = 30; 
+			RC.camera.rotation.x = -45*3.14/180; 
+			
+			// event listener
+			window.addEventListener( 'resize', onWindowResize, false );
+			
+			
+			console.log('-----------------')
+			
+			
+			// window resize
+
+			function  onWindowResize() {
+				console.log('-- callback:resize: window size ->'+window.innerWidth+'x'+window.innerHeight+'p');
+				RC.onWindowResize(window.innerWidth,window.innerHeight);
+			}
+			
+			function render() { 
+				requestAnimationFrame( render ); 
+				cylinder.rotation.x += 0.005;
+				origine.rotation.y += 0.01; 
+				torus.rotation.y -= 0.01;
+				cube.rotation.y += 0.04;
+				RC.renderer.render(RC.scene, RC.camera); 
+			};
+			 
+			render(); 
+		</script>
+	</body>
+</html>

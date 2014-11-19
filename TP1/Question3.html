@@ -1,0 +1,88 @@
+<html>
+	<head>
+		<title>MAR 2014 - TP1 - Question3 </title> 
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style> body { margin: 0; } canvas { width: 100%; height: 100% } </style> 
+	</head> 
+	<body>
+		<!-- include --> 
+		<script src="../threejs/build/three.min.js"></script> 
+		<script src="myJS/ThreeRenderingEnv.js"></script> 
+		<script src="myJS/ThreeLightingEnv.js"></script> 
+		<script src="myJS/blobul.js"></script> 
+		
+		<script>
+			//----------------------------------------------------------------------------
+			// MAR 2014 - TP01
+			// author(s) : Cozot, R. and Lamarche, F.
+			// date : 11/15/2014
+			//---------------------------------------------------------------------------- 
+			
+			// global vars
+			//----------------------------------------------------------------------------
+			var RC =  new ThreeRenderingEnv();
+			var Lights = new ThreeLightingEnv('rembrandt','bicolor','spot',RC);
+			
+			
+			// torus
+			var geometry = new THREE.TorusGeometry( 10, 3, 16, 100 );
+			
+			var materialBasic = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+			var materialLambert = new THREE.MeshLambertMaterial( { color: 0xffff00 } );
+			var materialPhong = new THREE.MeshPhongMaterial( { color: 0xffff00 } );
+			
+			var torus1 = new THREE.Mesh( geometry, materialBasic );
+			var torus2 = new THREE.Mesh( geometry, materialLambert );
+			var torus3 = new THREE.Mesh( geometry, materialPhong );
+			
+			torus1.position.x = -30;
+			torus2.position.x = 0;
+			torus3.position.x = 30;
+			
+			RC.addToScene( torus1 );
+			RC.addToScene( torus2 );
+			RC.addToScene( torus3 );
+			
+			
+			// ground
+			var ground = new THREE.Mesh(
+				new THREE.BoxGeometry( 100, 1, 100 ),
+				new THREE.MeshPhongMaterial( {color: 0x808080} )		
+			);
+			ground.receiveShadow = true;
+			ground.position.y = -20;
+			RC.addToScene( ground ); 
+			
+			RC.camera.position.z = 30; 
+			RC.camera.position.y = 30; 
+			RC.camera.rotation.x = -45*3.14/180; 
+			
+			// event listener
+			window.addEventListener( 'resize', onWindowResize, false );
+			
+			
+			console.log('-----------------')
+			
+			
+			// window resize
+			function  onWindowResize() {
+				console.log('-- callback:resize: window size ->'+window.innerWidth+'x'+window.innerHeight+'p');
+				RC.onWindowResize(window.innerWidth,window.innerHeight);
+			}
+			
+			function render() { 
+				requestAnimationFrame( render ); 
+				torus1.rotation.x += 0.005;
+				torus1.rotation.y += 0.01;
+				torus2.rotation.x += 0.005;
+				torus2.rotation.y += 0.01;
+				torus3.rotation.x += 0.005;
+				torus3.rotation.y += 0.01;
+				RC.renderer.render(RC.scene, RC.camera); 
+			};
+			 
+			render(); 
+		</script>
+	</body>
+</html>
