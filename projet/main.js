@@ -29,7 +29,7 @@ function start() {
 	//	----------------------------------------------------------------------------
 	//	global vars
 	//	----------------------------------------------------------------------------
-	var currentCamera = 0;
+	var isModeCine = false;
 	
 	//	keyPressed
 	var currentlyPressedKeys = {};
@@ -119,7 +119,8 @@ function start() {
 	function handleKeyUp(event) {
 		if (currentlyPressedKeys[80]) {
 			// (P) Change camera
-			currentCamera = (currentCamera+1)%RC.camera.length;
+			isModeCine = !isModeCine;
+			//currentCamera = (currentCamera+1)%RC.camera.length;
 		}
 		currentlyPressedKeys[event.keyCode] = false;
 	}
@@ -167,12 +168,63 @@ function start() {
 	function render() { 
 		requestAnimationFrame( render );
 		handleKeys();
-		RC.scene.getObjectByName("car",true).add( RC.camera[0] );
-		RC.scene.getObjectByName("car",true).position.x = SPx;
-		RC.scene.getObjectByName("car",true).position.y = SPz;
-		RC.scene.getObjectByName("car",true).position.z = SPy;
-		RC.scene.getObjectByName("car",true).rotation.y = SPt;
-		RC.renderer.render(RC.scene, RC.camera[currentCamera]); 
+		
+		// Deplacement de la voiture
+		var car = RC.scene.getObjectByName("car",true);
+		car.position.x = SPx;
+		car.position.y = SPz;
+		car.position.z = SPy;
+		car.rotation.y = SPt;
+		
+		// Parametrage des cameras
+		if (isModeCine) {
+			// mode cinematique
+			var activePlane = NAV.findActive(car.position.x, car.position.z);
+			switch (activePlane) {
+				case "0":
+					// block 1
+					RC.renderer.render(RC.scene, RC.camera[1]);
+					break;
+				case "1":
+				case "2":
+				case "3":
+				case "4":
+					// block 2, 3, 4, 5
+					RC.camera[2].lookAt(car.position);
+					RC.renderer.render(RC.scene, RC.camera[2]);
+					break;
+				case "5":
+				case "6":
+					// block 6, 7
+					RC.renderer.render(RC.scene, RC.camera[3]);
+					break;
+				case "7":
+				case "8":
+				case "9":
+					// block 8, 9, 10
+					RC.renderer.render(RC.scene, RC.camera[4]);
+					break;
+				case "10":
+				case "11":
+					// block 11, 12
+					RC.renderer.render(RC.scene, RC.camera[5]);
+					break;
+				case "12":
+				case "13":
+				case "14":
+					// block 13, 14, 15
+					RC.camera[6].lookAt(car.position);
+					RC.renderer.render(RC.scene, RC.camera[6]);
+					break;
+				default:
+					RC.renderer.render(RC.scene, RC.camera[0]);
+					break;
+			}
+		} else {
+			// mode third person
+			car.add( RC.camera[0] );
+			RC.renderer.render(RC.scene, RC.camera[0]); 
+		}
 	};
 
 	render(); 
