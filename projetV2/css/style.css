@@ -1,3 +1,12 @@
+@font-face {
+    font-family: "digital";
+    src: url('../font/digital-7.ttf');
+}
+@font-face {
+    font-family: "digital-mono";
+    src: url('../font/digital-7-mono.ttf');
+}
+
 body {
 	margin: 0;
 }
@@ -7,12 +16,13 @@ canvas {
 	height: 100%
 }
 
-#counter {
+#lap {
 	position: absolute;
 	top: 5px;
 	right: 10px;
 	color: #FFF;
-	font-size: 25px;
+	font-size: 30px;
+	font-family: digital;
 	text-shadow: 0 0 2px black;
 }
 
@@ -21,6 +31,20 @@ canvas {
 	top: 35px;
 	right: 10px;
 	color: #FFF;
-	font-size: 25px;
+	font-size: 30px;
+	font-family: digital;
 	text-shadow: 0 0 2px black;
+}
+
+#timer {
+	display: block;
+	position: absolute;
+	bottom: 15px;
+	left: 0px;
+	right: 0px;
+	text-align: center;
+	color: #FFF;
+	font-size: 35px;
+	font-family: digital-mono; 
+	text-shadow: 1px 1px 0px black;
 }

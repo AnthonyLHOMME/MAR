@@ -12,7 +12,8 @@ requirejs(['ModulesLoaderV2.js'], function()
 				"myJS/ThreeLightingEnv.js",
 				"myJS/ThreeLoadingEnv.js",
 				"myJS/navZ.js",
-				"FlyingVehicle.js"
+				"FlyingVehicle.js",
+				"lib/chrono.js"
 			]) ;
 			// Loads modules contained in includes and starts main function
 			ModulesLoader.loadModules(start) ;
@@ -30,20 +31,26 @@ function start(){
 	//	---------------------------------------------------------------------------- 			
 	//	global vars
 	//	----------------------------------------------------------------------------
-	var isModeCine = false;
+	
+	// Memorise le numero du bloc courant
+	var currentPlane = 0;
 
 	// Comptage des tours
-	var targetPlane = 1;
+	var listCheckpointPlane = [1,4,6,13,16,21,26,29];
+	var nbCheckpointCrossed = listCheckpointPlane.length;
 	var numTour = 0;
 	var maxTour = 3;
+	
+	// Mode cinématique
+	var isModeCine = false;
 	
 	//	keyPressed
 	var currentlyPressedKeys = {};
 	
 	// car Position
 	var CARx = -220; 
-	var CARy = 0 ; 
-	var CARz = 0 ;
+	var CARy = 100; 
+	var CARz = 0;
 	var CARtheta = 0 ; 
 	// car speed
 	var dt = 0.05; 
@@ -223,28 +230,38 @@ function start(){
 		// Updates car2
 		car2.rotation.z = vehicle.angles.z-Math.PI/2.0 ;
 		
+		// Listener de changement de block
 		var activePlane = NAV.findActive(NAV.x, NAV.y);
-		if (activePlane == targetPlane) {
-			targetPlane++;
-			if (activePlane == 1) {
-				numTour++;
-				document.getElementById("counter").innerHTML = numTour+" / "+maxTour;
-			}
-			if (targetPlane == 30) { // raz
-				targetPlane = 0;
-			}
-			// cas patriculier (blocs facultatif)
-			if (targetPlane == 2 || targetPlane == 9 || targetPlane == 20 || targetPlane == 22 || targetPlane == 25 || targetPlane == 27) {
-				targetPlane++;
-			}
+		if (activePlane != currentPlane) {
+			currentPlane = activePlane;
+			handleChangePlane(activePlane);
 		}
 		
-		document.getElementById("block").innerHTML = activePlane;
-			
 		var carPos = new THREE.Vector3(NAV.x, NAV.y, NAV.z);
 		renderingCamera(activePlane, carPos);
+		
+		// DEBUG
+		//document.getElementById("block").innerHTML = activePlane;
 	};
 	
+	// La voiture change de block (plane)
+	function handleChangePlane(plane) {
+		if (plane == 1 && nbCheckpointCrossed == listCheckpointPlane.length) {
+			nbCheckpointCrossed = 0;
+			handleNewLap();
+		}
+		if (plane == listCheckpointPlane[nbCheckpointCrossed]) {
+			nbCheckpointCrossed++;
+		}
+	}
+	
+	// La voiture passe la ligne d'arrivée
+	function handleNewLap() {
+		chronoResetAndStart();
+		numTour++;
+		document.getElementById("lap").innerHTML = numTour+" / "+maxTour;
+	}
+
 	function renderingCamera(activePlane, carPos) {
 		// Parametrage des cameras
 		if (isModeCine) {
