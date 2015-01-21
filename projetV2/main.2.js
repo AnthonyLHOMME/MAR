@@ -6,7 +6,7 @@
 requirejs(['ModulesLoaderV2.js'], function()
 		{ 
 			// Level 0 includes
-			ModulesLoader.requireModules(["../threejs/three.min.js"]) ;
+			ModulesLoader.requireModules(["threejs/three.min.js"]) ;
 			ModulesLoader.requireModules([
 				"myJS/ThreeRenderingEnv.js", 
 				"myJS/ThreeLightingEnv.js",
@@ -38,8 +38,9 @@ function start(){
 	// Comptage des tours
 	var listCheckpointPlane = [1,4,6,13,16,21,26,29];
 	var nbCheckpointCrossed = listCheckpointPlane.length;
-	var numTour = 0;
-	var maxTour = 3;
+	var numLap = 0;
+	var maxLap = 3;
+	var bestLap;
 	
 	// Mode cinématique
 	var isModeCine = false;
@@ -257,9 +258,9 @@ function start(){
 	
 	// La voiture passe la ligne d'arrivée
 	function handleNewLap() {
-		chronoResetAndStart();
-		numTour++;
-		document.getElementById("lap").innerHTML = numTour+" / "+maxTour;
+		chronoRestart();
+		numLap++;
+		document.getElementById("lap").innerHTML = numLap+" / "+maxLap;
 	}
 
 	function renderingCamera(activePlane, carPos) {

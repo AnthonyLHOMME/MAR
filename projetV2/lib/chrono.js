@@ -38,7 +38,7 @@ function chronoContinue(){
 function chronoReset(){
 	document.getElementById("timer").innerHTML = "00:00:000"
 }
-function chronoResetAndStart(){
+function chronoRestart(){
 	document.getElementById("timer").innerHTML = "00:00:000"
 	start = new Date()
 	chrono()
@@ -46,3 +46,10 @@ function chronoResetAndStart(){
 function chronoStop(){
 	clearTimeout(timerID)
 }
+function chronoGetTime(){
+	end = new Date()
+	diff = end - start
+	diff = new Date(diff)
+	return diff
+}
+	
