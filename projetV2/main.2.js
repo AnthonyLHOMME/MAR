@@ -40,7 +40,6 @@ function start(){
 	var nbCheckpointCrossed = listCheckpointPlane.length;
 	var numLap = 0;
 	var maxLap = 3;
-	var bestLap;
 	
 	// Mode cinématique
 	var isModeCine = false;
@@ -258,6 +257,13 @@ function start(){
 	
 	// La voiture passe la ligne d'arrivée
 	function handleNewLap() {
+		if (numLap > 0) {
+			var node = document.createElement("LI");
+			var textnode = document.createTextNode(numLap+". "+chronoGetStringTime());
+			node.appendChild(textnode);
+			document.getElementById("lapTime").appendChild(node);
+		}
+		
 		chronoRestart();
 		numLap++;
 		document.getElementById("lap").innerHTML = numLap+" / "+maxLap;

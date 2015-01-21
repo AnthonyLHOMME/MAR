@@ -46,10 +46,26 @@ function chronoRestart(){
 function chronoStop(){
 	clearTimeout(timerID)
 }
-function chronoGetTime(){
+function chronoGetStringTime(){
 	end = new Date()
 	diff = end - start
 	diff = new Date(diff)
-	return diff
+	var msec = diff.getMilliseconds()
+	var sec = diff.getSeconds()
+	var min = diff.getMinutes()
+	var hr = diff.getHours()-1
+	if (min < 10){
+		min = "0" + min
+	}
+	if (sec < 10){
+		sec = "0" + sec
+	}
+	if(msec < 10){
+		msec = "00" +msec
+	}
+	else if(msec < 100){
+		msec = "0" +msec
+	}
+	return min + ":" + sec + ":" + msec
 }
 	

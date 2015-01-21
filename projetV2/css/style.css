@@ -23,7 +23,6 @@ canvas {
 	color: #FFF;
 	font-size: 30px;
 	font-family: digital;
-	font-weight: bold;
 	text-shadow: 0 0 2px black;
 }
 
@@ -48,4 +47,16 @@ canvas {
 	font-size: 35px;
 	font-family: digital-mono; 
 	text-shadow: 1px 1px 0px black;
+}
+
+#lapTime {
+	display: block;
+	position: absolute;
+	top: 40px;
+	left: 0px;
+	color: #FFF;
+	font-size: 20px;
+	font-family: digital-mono; 
+	text-shadow: 0 0 2px black;
+	list-style: none;
 }
