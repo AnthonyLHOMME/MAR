@@ -60,3 +60,15 @@ canvas {
 	text-shadow: 0 0 2px black;
 	list-style: none;
 }
+
+#record {
+	display: block;
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	color: #FFF;
+	font-size: 22px;
+	font-family: digital-mono; 
+	text-shadow: 0 0 2px red;
+	list-style: none;
+}

@@ -56,6 +56,15 @@ function start(){
 	var dt = 0.05; 
 	var dx = 1.0;
 
+	// Best score (if available)
+	var bestTime = localStorage.getItem("bestTime");
+	if (bestTime != null) {
+		var mins = ("0"+((bestTime/60000>>0)%60)).slice(-2);
+		var seconds = ("0"+(bestTime/1000>>0)%60).slice(-2);
+		var millisecs = ("00"+bestTime%1000).slice(-3);
+		document.getElementById("record").innerHTML = mins + ":" + seconds + ":" + millisecs;
+	}
+
 	// Creates the vehicle (handled by physics)
 	var vehicle = new FlyingVehicle({
 		position: new THREE.Vector3(CARx, CARy, CARz),
@@ -205,7 +214,7 @@ function start(){
 	function  onWindowResize() {RC.onWindowResize(window.innerWidth,window.innerHeight);}
 	//	---------------------------------------------------------------------------
 
-	function render() { 
+	function render() {
 		requestAnimationFrame( render );
 		handleKeys();
 		
@@ -258,12 +267,22 @@ function start(){
 	// La voiture passe la ligne d'arrivée
 	function handleNewLap() {
 		if (numLap > 0) {
+			chronoStringTime = chronoGetStringTime();
+			chronoTime = chronoGetTime();
 			var node = document.createElement("LI");
-			var textnode = document.createTextNode(numLap+". "+chronoGetStringTime());
+			var textnode = document.createTextNode(numLap+". "+chronoStringTime);
 			node.appendChild(textnode);
 			document.getElementById("lapTime").appendChild(node);
+			var bestTime = localStorage.getItem("bestTime");
+			if (bestTime == null || chronoTime < bestTime) {
+				localStorage.setItem("bestTime", chronoTime);
+				var mins = ("0"+((chronoTime/60000>>0)%60)).slice(-2);
+				var seconds = ("0"+(chronoTime/1000>>0)%60).slice(-2);
+				var millisecs = ("00"+chronoTime%1000).slice(-3);
+				document.getElementById("record").innerHTML = mins + ":" + seconds + ":" + millisecs;
+			}
+
 		}
-		
 		chronoRestart();
 		numLap++;
 		document.getElementById("lap").innerHTML = numLap+" / "+maxLap;
