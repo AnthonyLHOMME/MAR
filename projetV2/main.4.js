@@ -96,6 +96,7 @@ function start()
 	function render() { 
 		requestAnimationFrame( render );
 		handleKeys();
+		vehicle.orientateHeli(new THREE.Vector3(0.05,1,0));
 		// Rendering
 		renderingEnvironment.renderer.render(renderingEnvironment.scene, renderingEnvironment.camera[0]); 
 	};

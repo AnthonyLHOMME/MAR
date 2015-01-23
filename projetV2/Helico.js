@@ -1,9 +1,11 @@
 if(typeof(ModulesLoader)=="undefined")
 {
-	throw "ModulesLoaderV2.js is required to load script FlyingVehicle.js" ; 
+	throw "ModulesLoaderV2.js is required to load script Helico.js" ; 
 }
 // Loads dependencies and initializes this module
-ModulesLoader.requireModules(['threejs/three.min.js', 'myJS/ThreeLoadingEnv.js']) ;
+ModulesLoader.requireModules(['threejs/three.min.js', 'myJS/ThreeLoadingEnv.js', 'myJS/ThreeRenderingEnv.js']) ;
+
+
 
 function Helico(parent) {
 	//	Loading env
@@ -91,4 +93,18 @@ function Helico(parent) {
 	paleC3.position.y = 2;
 	paleC3.position.z = 0;
 	paleC3.rotation.y = -2.1;
+
+
+	/* Oriente l'helico suivant l'axe Z et selon un vecteur vitesse */
+	this.orientateHeli = function(speedVector) {
+		/* Calculer l'angle entre le vecteur Y de l'helico et le vecteur vitesse */
+		/* Prof : utiliser la fonction math : arctan2 */
+		var vectorY = new THREE.Vector3(0,1,0);
+		var angle = speedVector.angleTo(vectorY);
+		if (speedVector.x < 0) {
+			angle = -angle;
+		}
+		corp.rotateOnAxis(new THREE.Vector3(0,0,1), -angle);
+	}
+
 }
