@@ -41,6 +41,12 @@ function start(){
 	var numLap = 0;
 	var maxLap = 2;
 	
+	// Affichage du record
+	var bestTime = sessionStorage.getItem("bestTime");
+	if (bestTime != null) {
+		document.getElementById("bestTime").innerHTML = "PB. "+timeToString(eval(bestTime));
+	}
+	
 	// Mode cinématique
 	var isModeCine = false;
 	
@@ -55,15 +61,6 @@ function start(){
 	// car speed
 	var dt = 0.05; 
 	var dx = 1.0;
-
-	// Best score (if available)
-	var bestTime = localStorage.getItem("bestTime");
-	if (bestTime != null) {
-		var mins = ("0"+((bestTime/60000>>0)%60)).slice(-2);
-		var seconds = ("0"+(bestTime/1000>>0)%60).slice(-2);
-		var millisecs = ("00"+bestTime%1000).slice(-3);
-		document.getElementById("record").innerHTML = mins + ":" + seconds + ":" + millisecs;
-	}
 
 	// Creates the vehicle (handled by physics)
 	var vehicle = new FlyingVehicle({
@@ -273,9 +270,9 @@ function start(){
 			document.getElementById("lapTime").appendChild(node);
 			
 			// meilleur temps
-			var bestTime = localStorage.getItem("bestTime");
+			var bestTime = sessionStorage.getItem("bestTime");
 			if (bestTime == null || chronoTime < bestTime) {
-				localStorage.setItem("bestTime", chronoTime);
+				sessionStorage.setItem("bestTime", chronoTime);
 				document.getElementById("bestTime").innerHTML = "PB. "+timeToString(chronoTime);
 			}
 		} else {
