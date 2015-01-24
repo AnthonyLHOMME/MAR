@@ -39,7 +39,7 @@ function start(){
 	var listCheckpointPlane = [1,4,6,13,16,21,26,29];
 	var nbCheckpointCrossed = listCheckpointPlane.length;
 	var numLap = 0;
-	var maxLap = 3;
+	var maxLap = 2;
 	
 	// Mode cinématique
 	var isModeCine = false;
@@ -248,9 +248,6 @@ function start(){
 		
 		var carPos = new THREE.Vector3(NAV.x, NAV.y, NAV.z);
 		renderingCamera(activePlane, carPos);
-		
-		// DEBUG
-		//document.getElementById("block").innerHTML = activePlane;
 	};
 	
 	// La voiture change de block (plane)
@@ -267,25 +264,46 @@ function start(){
 	// La voiture passe la ligne d'arrivée
 	function handleNewLap() {
 		if (numLap > 0) {
-			chronoStringTime = chronoGetStringTime();
-			chronoTime = chronoGetTime();
+			var chronoTime = chronoGetTime();
+			
+			// temps au tour
 			var node = document.createElement("LI");
-			var textnode = document.createTextNode(numLap+". "+chronoStringTime);
+			var textnode = document.createTextNode(numLap+". "+timeToString(chronoTime));
 			node.appendChild(textnode);
 			document.getElementById("lapTime").appendChild(node);
+			
+			// meilleur temps
 			var bestTime = localStorage.getItem("bestTime");
 			if (bestTime == null || chronoTime < bestTime) {
 				localStorage.setItem("bestTime", chronoTime);
-				var mins = ("0"+((chronoTime/60000>>0)%60)).slice(-2);
-				var seconds = ("0"+(chronoTime/1000>>0)%60).slice(-2);
-				var millisecs = ("00"+chronoTime%1000).slice(-3);
-				document.getElementById("record").innerHTML = mins + ":" + seconds + ":" + millisecs;
+				document.getElementById("bestTime").innerHTML = "PB. "+timeToString(chronoTime);
 			}
-
+		} else {
+			// premier tour
+			document.getElementById("maxLap").innerHTML = " / "+maxLap;
+			document.getElementById("lap").style.display = "block";
+			chronoInit();
 		}
-		chronoRestart();
-		numLap++;
-		document.getElementById("lap").innerHTML = numLap+" / "+maxLap;
+		
+		if (numLap == maxLap) {
+			//fin
+			chronoStop();
+			var totalTime = chronoGetTotalTime();
+			document.getElementById("separator").style.display = "block";
+			document.getElementById("totalTime").innerHTML = timeToString(totalTime);
+		} else {
+			chronoRestart();
+			numLap++;
+			document.getElementById("numLap").innerHTML = numLap;
+		}
+	}
+	
+	function timeToString(time){
+		time = new Date(time);
+		var msec = ("00"+time.getMilliseconds()).slice(-3);
+		var sec = ("0"+time.getSeconds()).slice(-2);
+		var min = ("0"+time.getMinutes()).slice(-2);
+		return min+":"+sec+":"+msec;
 	}
 
 	function renderingCamera(activePlane, carPos) {

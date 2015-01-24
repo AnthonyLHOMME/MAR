@@ -7,10 +7,17 @@
 	</head> 
 	<body>
 		<script data-main="main.2.js" src="lib/require.js"></script>
-		<span id="record"></span>
-		<span id="lap"></span>
-		<span id="block"></span>
+		<div id="lap">
+			<img src="img/flag.png" alt="" height="25px" />
+			<span id="numLap"></span>
+			<span id="maxLap"></span>
+		</div>
 		<span id="timer"></span>
-		<ul id="lapTime"></ul>
+		<div id="time">
+			<span id="bestTime">PB. __:__:___</span>
+			<ul id="lapTime"></ul>
+			<span id="separator">-------------</span>
+			<span id="totalTime"></span>
+		</div>
 	</body>
 </html>
