@@ -189,6 +189,7 @@ function FlyingVehicle(configuration)
 		result = Physics.eulerIntegration(this.mass, dt, this.position, this.speed, this.force) ;		
 		this.position = result.position ;
 		this.speed = result.speed ;
+		this.acceleration = angularAcceleration ;
 		// Resets everything
 		this.reset() ;
 	} ;

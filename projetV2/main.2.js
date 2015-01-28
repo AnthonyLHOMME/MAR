@@ -13,7 +13,8 @@ requirejs(['ModulesLoaderV2.js'], function()
 				"myJS/ThreeLoadingEnv.js",
 				"myJS/navZ.js",
 				"FlyingVehicle.js",
-				"lib/chrono.js"
+				"lib/chrono.js",
+				"Helico.js"
 			]) ;
 			// Loads modules contained in includes and starts main function
 			ModulesLoader.loadModules(start) ;
@@ -32,23 +33,22 @@ function start(){
 	//	global vars
 	//	----------------------------------------------------------------------------
 	
-	// Memorise le numero du bloc courant
-	var currentPlane = 0;
-
 	// Comptage des tours
-	var listCheckpointPlane = [1,4,6,13,16,21,26,29];
-	var nbCheckpointCrossed = listCheckpointPlane.length;
+	var currentPlane = 0;
+	var previousPlane = 0;
 	var numLap = 0;
 	var maxLap = 2;
 	
 	// Affichage du record
-	var bestTime = sessionStorage.getItem("bestTime");
+	var bestTime = localStorage.getItem("bestTime");
 	if (bestTime != null) {
 		document.getElementById("bestTime").innerHTML = "PB. "+timeToString(eval(bestTime));
 	}
 	
-	// Mode cinématique
-	var isModeCine = false;
+	// Replay
+	var recordingReplay = false;
+	var modeReplay = false;
+	localStorage["replayPos"] = JSON.stringify([]);
 	
 	//	keyPressed
 	var currentlyPressedKeys = {};
@@ -84,6 +84,7 @@ function start(){
 	//Loader.loadMesh('assets','tree_Zup_02','obj',	RC.scene,'trees',	-340,-340,0,'double');
 	Loader.loadMesh('assets','arrivee_Zup_01','obj',	RC.scene,'decors',	-340,-340,0,'front');
 		
+/*
 	//	Car
 	// car Translation
 	var car0 = new THREE.Object3D(); 
@@ -108,10 +109,16 @@ function start(){
 	car3.position.z= +0.25 ;
 	// attach the scene camera to car
 	car3.add(RC.camera[0]) ;
-	RC.camera[0].position.x = 0.0 ;
-	RC.camera[0].position.z = 10.0 ;
-	RC.camera[0].position.y = -25.0 ;
-	RC.camera[0].rotation.x = 85.0*3.14159/180.0 ;
+*/
+	var helico = new Helico(RC.scene);
+	helico.corp.position.x = CARx;
+	helico.corp.position.y = CARy;
+	helico.corp.position.z = CARz;
+	helico.corp.add(RC.camera[0]);
+	RC.camera[0].position.x = 0.0;
+	RC.camera[0].position.z = 10.0;
+	RC.camera[0].position.y = -25.0;
+	RC.camera[0].rotation.x = 85.0*3.14159/180.0;
 		
 	//	Skybox
 	Loader.loadSkyBox('assets/maps',['px','nx','py','ny','pz','nz'],'jpg', RC.scene, 'sky',4000);
@@ -176,7 +183,7 @@ function start(){
 	function handleKeyUp(event) {
 		if (currentlyPressedKeys[80]) {
 			// (P) Change camera
-			isModeCine = !isModeCine;
+			modeReplay = !modeReplay;
 		}
 		currentlyPressedKeys[event.keyCode] = false;
 	}
@@ -212,19 +219,48 @@ function start(){
 	//	---------------------------------------------------------------------------
 
 	function render() {
-		requestAnimationFrame( render );
-		handleKeys();
+		requestAnimationFrame(render);
 		
-		// Vehicle stabilization 
-		vehicle.stabilizeSkid(50) ; 
-		vehicle.stabilizeTurn(1000) ;
-		var oldPosition = vehicle.position.clone() ;
-		vehicle.update(1.0/60) ;
-		var newPosition = vehicle.position.clone() ;
-		newPosition.sub(oldPosition) ;
+		// Deplacement vehicule
+		if (modeReplay) {
+			// replay
+			//var replayPos = JSON.parse(localStorage["replayPos"]);
+			//car0.position = replayPos.shift();
+		} else {
+			// course
+			handleKeys();
+			/*if (recordingReplay) {
+				// sauvegarde position (replay)
+				var replayPos = JSON.parse(localStorage["replayPos"]);
+				replayPos.push(car0.position.clone());
+				localStorage["replayPos"] = JSON.stringify(replayPos);
+			}*/
+		}
+		moveVehicule();
+		
+		// Listener de changement de block
+		var activePlane = NAV.findActive(NAV.x, NAV.y);
+		if (activePlane != currentPlane) {
+			currentPlane = activePlane;
+			handleChangePlane();
+		}
+		
+		var carPos = new THREE.Vector3(NAV.x, NAV.y, NAV.z);
+		renderingCamera(activePlane, carPos);
+	};
+	
+	function moveVehicule() {
+		vehicle.stabilizeSkid(50); 
+		vehicle.stabilizeTurn(1000);
+		var oldPosition = vehicle.position.clone();
+		vehicle.update(1.0/60);
+		var newPosition = vehicle.position.clone();
+		newPosition.sub(oldPosition);
+		
+
 		// NAV
-		NAV.move(newPosition.x, newPosition.y, 150,10) ;
-		
+		NAV.move(newPosition.x, newPosition.y, 150, 10);
+/*
 		// Updates the vehicle
 		vehicle.position.x = NAV.x ;
 		vehicle.position.y = NAV.Y ;
@@ -235,26 +271,21 @@ function start(){
 		car1.matrix.copy(NAV.localMatrix(CARx,CARy));
 		// Updates car2
 		car2.rotation.z = vehicle.angles.z-Math.PI/2.0 ;
+*/
+		helico.corp.position.set(NAV.x, NAV.y, NAV.z);
+		helico.corp.rotation.z = vehicle.angles.z-Math.PI/2.0 ;
+		helico.speed(vehicle.speed.clone());
+		helico.acceleration(vehicle.acceleration.clone());
+		helico.update();
+	}
 		
-		// Listener de changement de block
-		var activePlane = NAV.findActive(NAV.x, NAV.y);
-		if (activePlane != currentPlane) {
-			currentPlane = activePlane;
-			handleChangePlane(activePlane);
-		}
-		
-		var carPos = new THREE.Vector3(NAV.x, NAV.y, NAV.z);
-		renderingCamera(activePlane, carPos);
-	};
-	
 	// La voiture change de block (plane)
-	function handleChangePlane(plane) {
-		if (plane == 1 && nbCheckpointCrossed == listCheckpointPlane.length) {
-			nbCheckpointCrossed = 0;
-			handleNewLap();
-		}
-		if (plane == listCheckpointPlane[nbCheckpointCrossed]) {
-			nbCheckpointCrossed++;
+	function handleChangePlane() {
+		if (currentPlane > previousPlane) {
+			if (currentPlane == 1) {
+				handleNewLap();
+			}
+			previousPlane = currentPlane % (NAV.planeSet.length - 1);
 		}
 	}
 	
@@ -270,15 +301,16 @@ function start(){
 			document.getElementById("lapTime").appendChild(node);
 			
 			// meilleur temps
-			var bestTime = sessionStorage.getItem("bestTime");
+			var bestTime = localStorage.getItem("bestTime");
 			if (bestTime == null || chronoTime < bestTime) {
-				sessionStorage.setItem("bestTime", chronoTime);
+				localStorage.setItem("bestTime", chronoTime);
 				document.getElementById("bestTime").innerHTML = "PB. "+timeToString(chronoTime);
 			}
 		} else {
 			// premier tour
 			document.getElementById("maxLap").innerHTML = " / "+maxLap;
 			document.getElementById("lap").style.display = "block";
+			recordingReplay = true;
 			chronoInit();
 		}
 		
@@ -288,6 +320,7 @@ function start(){
 			var totalTime = chronoGetTotalTime();
 			document.getElementById("separator").style.display = "block";
 			document.getElementById("totalTime").innerHTML = timeToString(totalTime);
+			modeReplay = true;
 		} else {
 			chronoRestart();
 			numLap++;
@@ -305,7 +338,7 @@ function start(){
 
 	function renderingCamera(activePlane, carPos) {
 		// Parametrage des cameras
-		if (isModeCine) {
+		if (modeReplay) {
 			// mode cinematique
 			switch (activePlane) {
 				case "0":

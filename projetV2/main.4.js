@@ -71,6 +71,7 @@ function start()
 		var rotationIncrement = 0.05 ;
 		if (currentlyPressedKeys[68]) // (D) Right
 		{
+			vehicle.acceleration(new THREE.Vector3(1,0,0);
 			renderingEnvironment.scene.rotateOnAxis(new THREE.Vector3(0.0,1.0,0.0), rotationIncrement) ;
 		}
 		if (currentlyPressedKeys[81]) // (Q) Left 
@@ -93,10 +94,11 @@ function start()
 		renderingEnvironment.onWindowResize(window.innerWidth,window.innerHeight);
 	}
 
+		vehicle.orientate(new THREE.Vector3(0.05,1,0));
 	function render() { 
 		requestAnimationFrame( render );
 		handleKeys();
-		vehicle.orientateHeli(new THREE.Vector3(0.05,1,0));
+		vehicle.update();
 		// Rendering
 		renderingEnvironment.renderer.render(renderingEnvironment.scene, renderingEnvironment.camera[0]); 
 	};
