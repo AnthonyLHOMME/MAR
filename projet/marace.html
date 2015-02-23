@@ -1,0 +1,33 @@
+<html>
+	<head>
+		<title>MAR 2014 - LHOMME & HACAULT</title> 
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+	</head> 
+	<body>
+		<form id="configForm">
+			<fieldset>
+				<legend>Configuration</legend>
+				<label for="maxLapInput">Nombre de tours</label>
+				<input type="number" min="1" value="1" id="maxLapInput" name="maxLapInput"/><br>
+				<input type="radio" name="vehicle" value="car" checked>Voiture<br>
+				<input type="radio" name="vehicle" value="helico" id="helico">Helicopter<br>
+				<input type="button" onclick="document.getElementById('configForm').style.display = 'none'; init();" value="Ok" style="cursor:pointer;"/>
+			</fieldset>
+		</form>
+		<script data-main="main.js" src="lib/require.js"></script>
+		<div id="lap">
+			<img src="img/flag.png" alt="" height="25px" />
+			<span id="numLap"></span>
+			<span id="maxLap"></span>
+		</div>
+		<span id="timer"></span>
+		<div id="time">
+			<span id="bestTime">PB. __:__:___</span>
+			<ul id="lapTime"></ul>
+			<span id="separator">-------------</span>
+			<span id="totalTime"></span>
+		</div>
+	</body>
+</html>

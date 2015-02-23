@@ -38,19 +38,19 @@ function ThreeLightingEnv(LightingSet,ColorHarmonie,spotDir,root,dist){
 			// add three spotlight lights
 			// key light
 			this.keyLight  = new THREE.SpotLight( 0xffffff, 1.0 );
-			this.keyLight.position.set( 0*this.distance, 0.5*this.distance, 1*this.distance );
+			this.keyLight.position.set( 0*this.distance, -1.0*this.distance, 0.5*this.distance );
 			this.keyLight.castShadow = true ;
 			this.keyLight.shadowDarkness  = 0.10 ;
 			O3D.add(this.keyLight);
 			// fill light
 			this.fillLight  = new THREE.SpotLight( 0x303030, 1.0);
-			this.fillLight.position.set( 0.866*this.distance, 0.5*this.distance, -0.5*this.distance );
+			this.fillLight.position.set( 0.866*this.distance, 0.5*this.distance, 0.5*this.distance );
 			this.fillLight.castShadow = true ;
 			this.fillLight.shadowDarkness  = 0.10 ;
 			O3D.add(this.fillLight);
 			// back light
 			this.backLight  = new THREE.SpotLight( 0xffffff, 1.0 );
-			this.backLight.position.set( -0.866*this.distance, 0.866*this.distance, -0.5*this.distance );
+			this.backLight.position.set( -0.866*this.distance, 0.5*this.distance, 0.866*this.distance );
 			this.backLight.castShadow = true ;
 			this.backLight.shadowDarkness  = 0.10 ;
 			O3D.add(this.backLight);
@@ -60,17 +60,17 @@ function ThreeLightingEnv(LightingSet,ColorHarmonie,spotDir,root,dist){
 			// add three directionnal lights
 			// key light
 			this.keyLight  = new THREE.DirectionalLight( 0xffffff, 1.0 );
-			this.keyLight.position.set( 0, 0.5, 1 ).normalize();
+			this.keyLight.position.set( 0, 1, 0.5 ).normalize();
 			//this.keyLight.castShadow = true ;
 			O3D.add(this.keyLight);
 			// fill light
 			this.fillLight  = new THREE.DirectionalLight( 0x303030, 1.0);
-			this.fillLight.position.set( 0.866, 0.5, -0.5 ).normalize();
+			this.fillLight.position.set( 0.866, -0.5, 0.5 ).normalize();
 			//this.fillLight.castShadow = true ;
 			O3D.add(this.fillLight);
 			// back light
 			this.backLight  = new THREE.DirectionalLight( 0xffffff, 1.0 );
-			this.backLight.position.set( -0.866, 0.866, -0.5 ).normalize();
+			this.backLight.position.set( -0.866, -0.5, 0.866 ).normalize();
 			//this.backLight.castShadow = true ;
 			O3D.add(this.backLight);
 			break;
@@ -106,7 +106,7 @@ function ThreeLightingEnv(LightingSet,ColorHarmonie,spotDir,root,dist){
 			root.renderer.setClearColor(0x302030, 1);
 			break ;
 		default:
-			console.log('ThreeLightingEnv:: '+ColorHarmonie+' must be: neutral cold or warm or bicolor');
+			console.log('ThreeLightingEnv:: '+ColorHarmonie+' must be: neutra, cold, warm or bicolor');
 	}
 	// LightingSet : highkey,lowkey, rembrandt
 	switch(LightingSet){
@@ -115,11 +115,11 @@ function ThreeLightingEnv(LightingSet,ColorHarmonie,spotDir,root,dist){
 			break;
 		case "lowkey":
 			// change fill light
-			O3D.rotation.y = - 120*3.14/180.0 ;
+			O3D.rotation.z = - 120*3.14/180.0 ;
 			break ;
 		case "rembrandt":
 			// change key and fill light
-			O3D.rotation.y = - 45*3.14/180.0 ;
+			O3D.rotation.z = - 45*3.14/180.0 ;
 			break ;
 		default:
 			console.log('ThreeLightingEnv:: '+LightingSet+' must be: highkey or lowkey or rembrandt');

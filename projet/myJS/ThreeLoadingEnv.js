@@ -5,12 +5,14 @@
 
 if(typeof(ModulesLoader)=="undefined")
 {
-	throw "ThreeLoadingEnv.js is required to load script KeyboardHandler.js" ; 
+	throw "ModulesLoaderV2.js is required to load script ThreeLoadingEnv.js" ; 
 }
 // Loads dependencies and initializes this module
-ModulesLoader.requireModules(['js/loaders/ColladaLoader.js',
-                              "js/loaders/MTLLoader.js", 
-                              "js/loaders/OBJMTLLoader.js", ]) ;
+ModulesLoader.requireModules(['threejs/three.min.js',
+							 'js/loaders/ColladaLoader.js',
+                             "js/loaders/MTLLoader.js", 
+                             "js/loaders/OBJMTLLoader.js",
+                             "DebugHelper"]) ;
 
 // constructor
 function ThreeLoadingEnv(){
@@ -31,22 +33,62 @@ function ThreeLoadingEnv(){
 	// name: Object3D name
 	// posX, posY,posZ: translation (float)
 	// side: 'front' or 'back' or 'double' (string)
+	// @return the root node of the loaded object
 	this.loadMesh = function(path,file,format,scene,name,posX,posY,posZ,side){
 		var loader ;
+		var newNode = new THREE.Object3D();
+		newNode.position.set(posX, posY, posZ) ;
+		scene.add(newNode) ;
+		newNode.name = name ;
 		switch(format){
 			case "obj":
-				this.loadObj(path, file, scene, name, posX, posY, posZ, side) ;
-			break;
+				this.loadObj(path, file, newNode, name, posX, posY, posZ, side) ;
+				break;
 			case "dae":
-				this.loadDae(path, file, scene, name, posX, posY, posZ, side) ;
-				// not yet supported
-				//console.log('ThreeLoadingEnv:: dae loading not yet supported !')
-			break ;
+				this.loadDae(path, file, newNode, name, posX, posY, posZ, side) ;
+				break ;
+			default:
+				console.error('Unrecognized file extension: '+format) ;
+				break ;
 		}
+		return newNode ;
+	}
+
+	/** Loads a geometry file
+	 * 
+	 *  @param descriptor data structure with the following fields:
+	 *  		filename {String} The full filename with path and extension
+	 *  		node The node of the scene graph under which the loaded geometry will be added
+	 *  		name The name given to the loaded object
+	 *  		side (optional, default='front') 'front' or 'back' or 'double' (string)
+	 *  		transX (optional, default=0.0) The X component of the initial translation
+	 *  		transY (optional, default=0.0) The Y component of the initial translation
+	 *  		transZ (optional, default=0.0) The Z component of the initial translation
+	 *  @return The root node of the loaded object
+	 */
+	this.load = function(descriptor)
+	{
+		// Default values
+		if(!descriptor.hasOwnProperty('transX')) { descriptor.transX = 0.0 ; } 
+		if(!descriptor.hasOwnProperty('transY')) { descriptor.transY = 0.0 ; } 
+		if(!descriptor.hasOwnProperty('transZ')) { descriptor.transZ = 0.0 ; } 
+		if(!descriptor.hasOwnProperty('side')) { descriptor.side = 'front' ; }
+		DebugHelper.requireAttribute(descriptor, 'filename', 'ThreeLaodingEnv.load: filename attribute is required') ;
+		DebugHelper.requireAttribute(descriptor, 'node', 'ThreeLaodingEnv.load: node attribute is required') ;
+		DebugHelper.requireAttribute(descriptor, 'name', 'ThreeLaodingEnv.load: name attribute is required') ;
+		// Extraction of path data
+		var lastDot = descriptor.filename.lastIndexOf('.') ;
+		var lastSlash = descriptor.filename.lastIndexOf('/') ;
+		var path = descriptor.filename.substr(0, lastSlash) ;
+		var extension = descriptor.filename.substr(lastDot+1, descriptor.filename.length-(lastDot+1)) ;
+		var file = descriptor.filename.substr(lastSlash+1, (lastDot-1)-(lastSlash+1)+1) ;
+		// Call to loadMesh
+		//console.log('Loading: '+path+'/'+file+'.'+extension) ;
+		return this.loadMesh(path, file, extension, descriptor.node, descriptor.name, descriptor.transX, descriptor.transY, descriptor.transZ, descriptor.side) ;
 	}
 	
 	this.loadDae = function(path,file,parentNode,name,posX,posY,posZ,side)
-	{
+	{		
 		/** Callback called once the geometry is loaded
 		 * 
 		 * @param object The loaded geometry
@@ -68,13 +110,6 @@ function ThreeLoadingEnv(){
 //					});
 //				break ;
 //			}
-			// Sets the object position
-			object.scene.position.x = posX ;
-			object.scene.position.y = posY ;
-			object.scene.position.z = posZ ;
-			// name
-			object.scene.name = name ;
-
 			console.log( 'ThreeLoadingEnv.load:: '+name+':: '+'added !' );
 			// Adds the geometry to the parent node
 			parentNode.add(object.scene) ;
@@ -100,12 +135,6 @@ function ThreeLoadingEnv(){
 		//
 		loader.load(mesh,mat,
 			function(o){	// on load
-			// translation
-				o.position.x = posX ;
-				o.position.y = posY ;
-				o.position.z = posZ ;
-				// name
-				o.name = name ;
 				// side
 				switch(side){
 					case "double":
@@ -149,7 +178,6 @@ function ThreeLoadingEnv(){
 	// size: box size (float)
 	// example
 	// Loader.loadSkyBox('assets',['px','nx','py','ny','pz','nz'],'jpg', RC.scene, 'sky',4000);
-
 	this.loadSkyBox = function(path,files,format,scene,name,size){
 		// files names
 		var urls= [];

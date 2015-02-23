@@ -1,0 +1,97 @@
+@font-face {
+    font-family: "digital-italic";
+    src: url('../font/digital-7-italic.ttf');
+}
+@font-face {
+    font-family: "digital-mono-italic";
+    src: url('../font/digital-7-mono-italic.ttf');
+}
+@font-face {
+    font-family: "digital-mono";
+    src: url('../font/digital-7-mono.ttf');
+}
+
+body {
+	margin: 0;
+}
+
+canvas {
+	width: 100%;
+	height: 100%
+}
+
+#configForm {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	width: 400px;
+	height: 124px;
+	background: #f9f9f9;
+	border-radius: 5px;
+}
+
+#timer {
+	display: block;
+	position: absolute;
+	bottom: 15px;
+	left: 0px;
+	right: 0px;
+    
+	color: #FFF;
+	font-size: 35px;
+	font-family: digital-mono;
+	text-align: center;
+	text-shadow: 1px 1px 0px black;
+}
+
+#lap {
+	display: none;
+	position: absolute;
+	top: 40px;
+	right: 0px;
+	padding: 8px 10px;
+	
+	color: #FFF;
+	background: rgba(0,0,0,0.4);
+	border-radius: 4px 0px 0px 4px;
+}
+#lap #numLap {
+	font-family: digital-mono-italic;
+	font-size: 35px;
+}
+#lap #maxLap {
+	font-family: digital-italic;
+	font-size: 30px;
+}
+
+#time {
+	position: absolute;
+	top: 40px;
+	left: 0px;
+	padding: 8px 10px;
+	
+	color: #FFF;
+	font-size: 22px;
+	font-family: digital-mono;
+	text-align: right;
+	
+	background: rgba(0,0,0,0.4);
+	border-radius: 0px 4px 4px 0px;
+}
+#time > ul {
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+	padding-top: 5px;
+}
+#time #bestTime {
+	color: #f4a419;
+}
+
+#separator {
+	display: none;
+	color: #ccc;
+}
