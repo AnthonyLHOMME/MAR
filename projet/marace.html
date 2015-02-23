@@ -12,10 +12,14 @@
 				<label for="maxLapInput">Nombre de tours</label>
 				<input type="number" min="1" value="1" id="maxLapInput" name="maxLapInput"/><br>
 				<input type="radio" name="vehicle" value="car" checked>Voiture<br>
-				<input type="radio" name="vehicle" value="helico" id="helico">Helicopter<br>
-				<input type="button" onclick="document.getElementById('configForm').style.display = 'none'; init();" value="Ok" style="cursor:pointer;"/>
+				<input type="radio" name="vehicle" value="helico" id="helico">Hélicoptère
+				<input type="button" onclick="document.getElementById('configForm').style.display = 'none'; init();" value="Démarrer" style="cursor:pointer;"/>
 			</fieldset>
 		</form>
+		<div id="finishPopup">
+			Terminé !<br>
+			<input type="button" onclick="document.location.reload()" style="cursor:pointer;" value="Rejouer">
+		</div>
 		<script data-main="main.js" src="lib/require.js"></script>
 		<div id="lap">
 			<img src="img/flag.png" alt="" height="25px" />
@@ -29,5 +33,6 @@
 			<span id="separator">-------------</span>
 			<span id="totalTime"></span>
 		</div>
+		<div id="opacDiv"></div>
 	</body>
 </html>

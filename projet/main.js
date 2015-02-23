@@ -281,6 +281,8 @@ function start(){
 			var totalTime = chronoGetTotalTime();
 			document.getElementById("separator").style.display = "block";
 			document.getElementById("totalTime").innerHTML = timeToString(totalTime);
+			document.getElementById("finishPopup").style.display = "block";
+			document.getElementById("opacDiv").style.display = "block";
 			finish = true;
 		} else {
 			chronoRestart();

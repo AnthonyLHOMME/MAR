@@ -17,20 +17,84 @@ body {
 
 canvas {
 	width: 100%;
-	height: 100%
+	height: 100%;
+}
+
+#opacDiv {
+   display: none;
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   z-index: 1;
+   background: #FFF;
+   opacity: 0.3;
 }
 
 #configForm {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	margin: auto;
-	width: 400px;
-	height: 124px;
-	background: #f9f9f9;
-	border-radius: 5px;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin: auto;
+    width: 400px;
+    height: 103px;
+    background: #EEE;
+    border-radius: 5px;
+    box-shadow: 1px 1px 15px #FFF;
+    z-index: 2;
+}
+
+#configForm > fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+}
+
+#configForm > fieldset > legend {
+   width: 400px;
+   background: #BBB;
+   border-radius: 5px 5px 0px 0px;
+   box-sizing: border-box;
+   border-bottom: 1px solid #AAA;
+   margin-bottom: 5px;
+   font-size: 14px;
+   padding: 4px 3px 3px 5px;
+}
+
+#configForm > fieldset > label {
+   margin-left: 7px;
+}
+
+#configForm > fieldset > #maxLapInput {
+   width: 50px;
+}
+
+#configForm > fieldset > input[type="button"] {
+   margin-top: 3px;
+   margin-right: 5px;
+   float: right;
+}
+
+#finishPopup {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 0px;
+    right: 0px;
+    margin: auto;
+    width: 230px;
+    height: 65px;
+    background: #EEE;
+    border-radius: 5px;
+    box-shadow: 1px 1px 15px #000;
+    font-size: 30px;
+    text-align: center;
+    opacity: 0.9;
+    z-index: 2;
 }
 
 #timer {
